@@ -34,6 +34,10 @@ R = random.randint(0, 255)
 G = random.randint(0, 255)
 B = random.randint(0, 255)
 RANDOM = (R, G, B)
+R_2 = random.randint(0, 255)
+G_2 = random.randint(0, 255)
+B_2 = random.randint(0, 255)
+RANDOM_2 = (R_2, G_2, B_2)
 
 UP = 'up'  
 DOWN = 'down'  
@@ -52,14 +56,14 @@ def main():
     pygame.display.set_caption("sNaKe_ClOnE")
     showStartScreen()  # Not yet defined
     while True:
-        runGame()  # Needs work
-        showGameOverScreen()  # Needs work
+        score = runGame()  # Needs work
+        showGameOverScreen(score)  # Needs work
 
 
 def showStartScreen():
     print("Start the Snake Game!!!")
                             # Hover over render to see what the params mean
-    instText = BASIC_FONT.render("Use wasd or Arrows to turn.", False, RED, BLACK)
+    instText = BASIC_FONT.render("Use wasd or Arrows to turn.", True, RED, BLACK)
     startText = BASIC_FONT.render("Press Any key to start", True, GREEN, BLACK)
     DISPLAY_SURF.fill(BLACK)
     DISPLAY_SURF.blit(instText, (WINDOW_WIDTH/10, WINDOW_HEIGHT//8))
@@ -103,12 +107,12 @@ def drawApple(appleLocation):
 def drawSnake(snakeCoords):
     for segment in snakeCoords:
         snakeBodySeg = pygame.Rect(segment[X]*CELL_SIZE, segment[Y]*CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        pygame.draw.rect(DISPLAY_SURF, GREEN, snakeBodySeg)
+        pygame.draw.rect(DISPLAY_SURF, RANDOM_2, snakeBodySeg)
         snakeBodySeg = pygame.Rect(segment[X]*CELL_SIZE+2, segment[Y]*CELL_SIZE+2, CELL_SIZE-4, CELL_SIZE-4)
         pygame.draw.rect(DISPLAY_SURF, RANDOM, snakeBodySeg)
 
 
-def showGameOverScreen():
+def showGameOverScreen(score):
     # loop to get player "stuck" on game over
     # break the loop when they press a button like the start screen
     while True:
@@ -116,10 +120,14 @@ def showGameOverScreen():
         gameText = goFont.render("Game", True, GREEN, BLACK)
         overText = goFont.render("Over", True, GREEN, BLACK)
         playText = BASIC_FONT.render("Press any key to play again.", True, RED, BLACK)
+        scoreText = BASIC_FONT.render("Score: " + str(score), True, GREEN, BLACK)
+        # score_number = BASIC_FONT.render(score, True, GREEN, BLACK)
         DISPLAY_SURF.fill(BLACK)
         DISPLAY_SURF.blit(gameText, (WINDOW_WIDTH/10, WINDOW_HEIGHT//8))
         DISPLAY_SURF.blit(overText, (WINDOW_WIDTH/8, WINDOW_HEIGHT//2))
         DISPLAY_SURF.blit(playText, (WINDOW_WIDTH/10, WINDOW_HEIGHT-50))
+        DISPLAY_SURF.blit(scoreText, (350, WINDOW_HEIGHT-50))
+        # DISPLAY_SURF.blit(score_number, (400, WINDOW_HEIGHT-50))
         pygame.display.update()
         time.sleep(1)
         for event in pygame.event.get(): # event handling loop
@@ -184,12 +192,12 @@ def runGame():
         # Check for collision If the snake collides what should it do
         #       What is it colliding with ?
         if snakeCoords[HEAD][X] > CELL_WIDTH or snakeCoords[HEAD][X] < 0:
-            return # Stop the runGame() function
+            return score # Stop the runGame() function
         elif snakeCoords[HEAD][Y] > CELL_HEIGHT or snakeCoords[HEAD][Y] < 0:
-            return
+            return score
         # check for collision with itself
         elif snakeCoords[HEAD] in snakeCoords[1:]:
-            return
+            return score
         # Check for apple collision
         elif snakeCoords[HEAD] == apple:
             apple = getRandomLocation(snakeCoords)
